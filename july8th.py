@@ -101,8 +101,8 @@ def faiss_ivf_search(database_vectors, query_vectors, k=5, n_regions=10, nprobe=
     dimension = database_vectors.shape[1] # get vector dimensionality
 
     print("Training index")
-    quantizer = faiss.IndexFlatL2(dimension) # flat L2 (coarse-level) index used only as a quantizer to train and assign vectors to closest regions
-    index = faiss.IndexIVFFlat(quantizer, dimension, n_regions, faiss.METRIC_L2) # creates IVF index with n_regions clusters, a FAISS index used only to assign vectors to regions, and stores all vectors within each region as-is
+    quantizer = faiss.IndexFlatIP(dimension) # flat L2 (coarse-level) index used only as a quantizer to train and assign vectors to closest regions
+    index = faiss.IndexIVFFlat(quantizer, dimension, n_regions, faiss.METRIC_INNER_PRODUCT) # creates IVF index with n_regions clusters, a FAISS index used only to assign vectors to regions, and stores all vectors within each region as-is
 
     train_start = time.time()
     index.train(database_vectors) # trains k-means on the database vectors and generate n_regions of centroids
@@ -160,8 +160,8 @@ nprobe = 3 # how many regions to actually search
 
 # Create and train index
 dimension = database_vectors.shape[1] # number of features (3)
-quantizer = faiss.IndexFlatL2(dimension) # a flat L2 index used to assign vectors to regions
-index = faiss.IndexIVFFlat(quantizer, dimension, n_regions, faiss.METRIC_L2) #IVF index that stores vectors grouped into regions, each region being assigned by the quantizer
+quantizer = faiss.IndexFlatIP(dimension) # a flat L2 index used to assign vectors to regions
+index = faiss.IndexIVFFlat(quantizer, dimension, n_regions, faiss.METRIC_INNER_PRODUCT) #IVF index that stores vectors grouped into regions, each region being assigned by the quantizer
 
 print("Training index...")
 train_start = time.time()
